@@ -129,7 +129,7 @@
     <button id="ugh" class="m" value='rateByAmortization'><span>Amortization </span></button>
     <button class="m" value='rateBycreditscore'><span>creditscore </span></button>
     <button class="m" value='rateByProperty'><span>Property </span></button>
-    <button class="m" value='rateByOpera'><span>Opera </span></button>
+    <button class="m" value='rateBylenderid'><span>lenderid </span></button>
     <button class="m" value='rateByBallet'><span>Ballet </span></button>
     <div class="visualisation">
   <div>Loading Visualisation Choropleth</div>
@@ -188,7 +188,7 @@ d3.json('https://raw.githubusercontent.com/ashah77/VA-Project/master/us-states.j
     var rateByAmortization = {};
     var rateBycreditscore = {};
     var rateByProperty = {};
-    var rateByOpera = {};
+    var rateBylenderid = {};
     var rateByBallet = {};
 
 d3.csv("https://raw.githubusercontent.com/n-antony/n-antony.github.io/master/State_Info.csv", function(error, totals){
@@ -225,8 +225,8 @@ function drawMap(type) {
                 choro = rateByProperty;
                 cscale = colorbrewer.Greens[9]
             }
-            if (type == "rateByOpera") {
-                choro = rateByOpera;
+            if (type == "rateBylenderid") {
+                choro = rateBylenderid;
                 cscale = colorbrewer.Purples[9]
             }
             if (type == "rateByBallet") {
@@ -239,7 +239,7 @@ function drawMap(type) {
     rateByAmortization[d.FIPS_STATE] = +d.Amortization_Perc;
     rateBycreditscore[d.FIPS_STATE] = +d.creditscore_Perc;
     rateByProperty[d.FIPS_STATE] = +d.Property_Perc;
-    rateByOpera[d.FIPS_STATE] = +d.Opera_Perc;
+    rateBylenderid[d.FIPS_STATE] = +d.lenderid_Perc;
     rateByBallet[d.FIPS_STATE] = +d.Ballet_Perc;
 });
 
