@@ -130,7 +130,6 @@
     <button class="m" value='rateBycreditscore'><span>creditscore </span></button>
     <button class="m" value='rateByProperty'><span>Property </span></button>
     <button class="m" value='rateBylenderid'><span>lenderid </span></button>
-    <button class="m" value='rateByBallet'><span>Ballet </span></button>
     <div class="visualisation">
   <div>Loading Visualisation Choropleth</div>
 
@@ -189,7 +188,6 @@ d3.json('https://raw.githubusercontent.com/ashah77/VA-Project/master/us-states.j
     var rateBycreditscore = {};
     var rateByProperty = {};
     var rateBylenderid = {};
-    var rateByBallet = {};
 
 d3.csv("https://raw.githubusercontent.com/n-antony/n-antony.github.io/master/State_Info.csv", function(error, totals){
    totals.forEach(function (d) {
@@ -210,7 +208,7 @@ function drawMap(type) {
             var choro = null;
 
             if (type == "rateByOverall") {
-                choro = rateByAmortization;
+                choro = rateByOverall;
                 cscale = colorbrewer.PuBu[9]
             }
             if (type == "rateByAmortization") {
@@ -229,10 +227,7 @@ function drawMap(type) {
                 choro = rateBylenderid;
                 cscale = colorbrewer.Purples[9]
             }
-            if (type == "rateByBallet") {
-                choro = rateByBallet;
-                cscale = colorbrewer.Blues[9]
-            }
+          
 
     dataPerc.forEach(function (d) {
     rateByOverall[d.FIPS_STATE] = +d.Overall;
@@ -240,7 +235,6 @@ function drawMap(type) {
     rateBycreditscore[d.FIPS_STATE] = +d.creditscore_Perc;
     rateByProperty[d.FIPS_STATE] = +d.Property_Perc;
     rateBylenderid[d.FIPS_STATE] = +d.lenderid_Perc;
-    rateByBallet[d.FIPS_STATE] = +d.Ballet_Perc;
 });
 
     var min = Infinity, max = -Infinity, x;
