@@ -161,14 +161,18 @@ header
 .btn-group button:hover {
     background-color: #3e8e41;
 }
-    </style>
+    
+       </style>
   </head>
   <body>
-    <h1 id="header" align='center'>LENDING TREE</h1>
-    <button id="ugh" class="v" value='rateByAmortization'><span>Amortization </span></button>
-    <button class="v" value='rateBycreditscore'><span>creditscore </span></button>
-    <button class="v" value='rateByProperty'><span>Property </span></button>
-    <button class="v" value='rateBylenderid'><span>lenderid </span></button>
+    <div id="container">
+      <header><b><br>LENDING TREE</b></header>
+      <div class="btn-group" style="width:100%">
+  <button style="width:25%" class='v'value="rateByAmortization">Amortization</button>
+  <button style="width:25%" class ='v'value="rateBycreditscore">creditscore</button>
+  <button style="width:25%" class ='v' value="rateByProperty">Property</button>
+  <button style="width:25%"class ='v' value="rateBylenderid">lenderid</button>
+</div>
     <div class="visualisation">
   <div>Loading Visualisation Choropleth</div>
 
@@ -179,6 +183,7 @@ header
 </div>
     <script type="text/javascript">
 'use strict';
+      
 var dataset;
 var totalset;
 var flagEd = false;
