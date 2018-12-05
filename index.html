@@ -188,8 +188,8 @@ var dataset;
 var totalset;
 var flagEd = false;
 var flagAge = true;
-var height = 600;
- var width = 700 * 1.21;
+var height = 700;
+ var width = 800 * 1.21;
      var margin2 = {top: 100, right: 20, bottom: 75, left: 40},
     width2 = 400 - margin2.left - margin2.right,
     height2 = 460 - margin2.top - margin2.bottom;
@@ -346,8 +346,8 @@ function getCountryByCode(code,data) {
 }
 
 function drawGraph(state,cat){
-    var width = width2+30;
-    var height= height2+30;
+    var width = width2;
+    var height= height2;
     var margin = {top: 100, right: 20, bottom: 65, left: 50};
 
     var x0 = d3.scale.ordinal()
