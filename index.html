@@ -333,13 +333,7 @@ function drawMap(type) {
             });
 
 function drawInfo() {
-    var info = d3.select('.visualisation').append('div').attr('class', 'info');
-    info.append('h2').text('State');
-    info.append('p').attr('class', 'name').text('none');
-    info.append('h2').text('Percentage');
-    info.append('p').attr('class', 'value').text('none');
-    info.append('h2').text('Total Respondants');
-    info.append('p').attr('class', 'total').text('none');
+    
     //info.append('button').attr('class', 'button').text('View by Education');
 }
 function getCountryByCode(code,data) {
