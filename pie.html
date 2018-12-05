@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<style>
+body {
+
+	background-color: #333;
+	color: #ffffff;
+	font-family: sans-serif;
+}
+hi{
+	font-size: 20px;
+}
+
+.visualisation {
+float: right;
+width: 220px;
+}
+.map {
+float: left;
+width: 50%;
+}
+.graph{
+	float:left !important;
+	width:30%;
+	font-size: 10px;
+	color: #ffffff;
+}
+.graph path{
+color:white;
+}
+
+path {
+	stroke-width: 1px;
+}
+
+.map path:hover {
+	fill: #C4FFB0;
+	fill-opacity: 1 !important;
+}
+
+svg, .info {
+	float: left;
+}
+
+.info {
+	padding-left: 30px;
+}
+ .info button{
+	background-color: #97a1b4; /* Green */
+border: none;
+color: white;
+padding: 10px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 12px;
+border-radius: 6px;
+}
+.info button:focus{
+}
+
+div#container{
+width: 100%;
+height: auto;
+min-width: 1300px;
+
+}
+header
+{
+background-color: white;
+
+min-height: 100px;
+text-align: center;
+font-size: 30px;
+color: orange;
+margin: 0px;
+}
+.btn-group button {
+background-color: #4CAF50; /* Green background */
+border: 1px solid green; /* Green border */
+color: white; /* White text */
+padding: 10px 24px; /* Some padding */
+cursor: pointer; /* Pointer/hand icon */
+float: left; /* Float the buttons side by side */
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+content: "";
+clear: both;
+display: table;
+}
+
+.btn-group button:not(:last-child) {
+border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+background-color: #3e8e41;
+}
+
+
+.rectangle {
+	fill: steelblue;
+}
+.rectangle:hover {
+	fill: orange;
+}
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+</style>
+</head>
+<body>
+	<div id="container">
+		<header>
+		<img src="len.jpeg" alt="lender" width:"20px" height:"20px">
+	</header>
+		<div class="btn-group" style="width:100%">
+	<button style="width:14.28%">Motivation</button>
+	<button style="width:14.28%" onclick="location.href='index.html'">Amortization</button>
+	<button style="width:14.28%" onclick="location.href='index.html'">Credit Score</button>
+	<button style="width:14.28%" onclick="location.href='index.html'">Property</button>
+	<button style="width:14.28%"onclick="location.href='index.html'">Lender Id</button>
+	<button style="width:14.28%" onclick="location.href='index.html'">Others</button>
+	<button style="width:14.28%" onclick="location.href='summary.html'">Summary</button>
+	</div>
+<div id="drop" align=center ></div>
+<script src="https://cdn.jsdelivr.net/gh/ashah77/VA-Project/d3.v3.js"></script>
+<script>
+
+var margin = {top: 150, right: 0, bottom: 30, left: 50},
+    width = 800 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+	.attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("https://raw.githubusercontent.com/krishreddy56/VA-project/master/datanum.csv", function(error, data){
+
+	// filter year
+	var data = data.filter(function(d){return d.Year == '2012';});
+	// Get every column value
+	var elements = Object.keys(data[0])
+		.filter(function(d){
+			return ((d != "Year") & (d != "State"));
+		});
+	var selection = elements[0];
+
+	var y = d3.scale.linear()
+			.domain([0, d3.max(data, function(d){
+				return +d[selection];
+			})])
+			.range([height, 0]);
+
+	var x = d3.scale.ordinal()
+			.domain(data.map(function(d){ return d.State;}))
+			.rangeBands([0, width]);
+
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+	    .orient("left");
+
+	svg.append("g")
+    	.attr("class", "x axis")
+    	.attr("transform", "translate(0," + height + ")")
+    	.call(xAxis)
+    	.selectAll("text")
+    	.style("font-size", "8px")
+      	.style("text-anchor", "end")
+      	.attr("dx", "-.8em")
+      	.attr("dy", "-.55em")
+      	.attr("transform", "rotate(-90)" );
+
+
+ 	svg.append("g")
+    	.attr("class", "y axis")
+    	.call(yAxis);
+
+	svg.selectAll("rectangle")
+		.data(data)
+		.enter()
+		.append("rect")
+		.attr("class","rectangle")
+		.attr("width", width/data.length)
+		.attr("height", function(d){
+			return height - y(+d[selection]);
+		})
+		.on("click",function(d){
+			change(d);
+		})
+		.attr("x", function(d, i){
+			return (width / data.length) * i ;
+		})
+		.attr("y", function(d){
+			return y(+d[selection]);
+		})
+		.append("title")
+		.text(function(d){
+			return d.State + " : " + d[selection];
+		})
+		;
+
+
+		//svg.selectAll(".rectangle").on("click",alert("hello"));
+
+	var selector = d3.select("#drop")
+    	.append("select")
+    	.attr("id","dropdown")
+    	.on("change", function(d){
+        	selection = document.getElementById("dropdown");
+
+        	y.domain([0, d3.max(data, function(d){
+				return +d[selection.value];})]);
+
+        	yAxis.scale(y);
+
+        	d3.selectAll(".rectangle")
+           		.transition()
+	            .attr("height", function(d){
+					return height - y(+d[selection.value]);
+				})
+				.attr("x", function(d, i){
+					return (width / data.length) * i ;
+				})
+				.attr("y", function(d){
+					return y(+d[selection.value]);
+				})
+           		.ease("linear")
+           		.select("title")
+           		.text(function(d){
+           			return d.State + " : " + d[selection.value];
+           		});
+
+           	d3.selectAll("g.y.axis")
+           		.transition()
+           		.call(yAxis);
+
+         });
+
+    selector.selectAll("option")
+      .data(elements)
+      .enter().append("option")
+      .attr("value", function(d){
+        return d;
+      })
+      .text(function(d){
+        return d;
+      })
+
+
+
+
+});
+
+
+</script>
+
+<div id="pieChart" align=center style="float:right" >  <br> <br> <br></br></br> </br> </div>
+
+<script>
+
+/*
+	################ FORMATS ##################
+	-------------------------------------------
+	*/
+
+
+var 	formatAsPercentage = d3.format("%"),
+		formatAsPercentage1Dec = d3.format(".1%"),
+		formatAsInteger = d3.format(","),
+		fsec = d3.time.format("%S s"),
+		fmin = d3.time.format("%M m"),
+		fhou = d3.time.format("%H h"),
+		fwee = d3.time.format("%a"),
+		fdat = d3.time.format("%d d"),
+		fmon = d3.time.format("%b")
+		;
+
+
+var dataset = [
+			{category: "Abandoned", measure: 35},
+	      {category: "Accepted", measure: 35},
+	      {category: "Rejected", measure: 30}
+
+	      ]
+	      ;
+
+	var widthPie = 400,
+		   heightPie = 400,
+		   outerRadius = Math.min(widthPie, heightPie) / 2,
+		   innerRadius = outerRadius * .999,
+		   // for animation
+		   innerRadiusFinal = outerRadius * .5,
+		   innerRadiusFinal3 = outerRadius* .45,
+		   color = d3.scale.category10()    //builtin range of colors
+		   //color = d3.interpolateYlGn(0)
+		   ;
+
+	var vis = d3.select("#pieChart")
+	     .append("svg:svg")              //create the SVG element inside the <body>
+	     .data([dataset])                   //associate our data with the document
+	         .attr("width", widthPie)           //set the width and height of our visualization (these will be attributes of the <svg> tag
+	         .attr("height", heightPie)
+	     		.append("svg:g")                //make a group to hold our pie chart
+	         .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")")    //move the center of the pie chart from 0, 0 to radius, radius
+				;
+
+   var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
+        	.outerRadius(outerRadius).innerRadius(innerRadius);
+
+   // for animation
+   var arcFinal = d3.svg.arc().innerRadius(innerRadiusFinal).outerRadius(outerRadius);
+	var arcFinal3 = d3.svg.arc().innerRadius(innerRadiusFinal3).outerRadius(outerRadius);
+
+   var pie = d3.layout.pie()           //this will create arc data for us given a list of values
+        .value(function(d) { return d.measure; });    //we must tell it out to access the value of each element in our data array
+
+   var arcs = vis.selectAll("g.slice")     //this selects all <g> elements with class slice (there aren't any yet)
+        .data(pie)                          //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties)
+        .enter()                            //this will create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array
+            .append("svg:g")                //create a group to hold each slice (we will have a <path> and a <text> element associated with each slice)
+               .attr("class", "slice")    //allow us to style things in the slices (like text)
+               //.on("mouseover", mouseover)
+    				//.on("mouseout", mouseout)
+    				//.on("click", up)
+    				;
+
+    var svgPie =    arcs.append("svg:path")
+               .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
+               .attr("d", arc)     //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+					.append("svg:title") //mouseover title showing the figures
+				   .text(function(d) { return d.data.category + ": " + formatAsPercentage(d.data.measure); });
+
+        d3.selectAll("g.slice").selectAll("path").transition()
+			    .duration(750)
+			    .delay(10)
+			    .attr("d", arcFinal )
+			    ;
+
+	  // Add a label to the larger arcs, translated to the arc centroid and rotated.
+	  // source: http://bl.ocks.org/1305337#index.html
+	  arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; })
+	  		.append("svg:text")
+	      .attr("dy", ".35em")
+	      .attr("text-anchor", "middle")
+	      .attr("transform", function(d) { return "translate(" + arcFinal.centroid(d) + ")rotate(" + angle(d) + ")"; })
+	      text(function(d) { return formatAsPercentage(d.value); })
+	      //.text(function(d) { return d.data.category; })
+	      ;
+
+	   // Computes the label angle of an arc, converting from radians to degrees.
+		function angle(d) {
+		    var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+		    return a > 90 ? a - 180 : a;
+		}
+
+
+		// Pie chart title
+		vis.append("svg:text")
+	     	.attr("dy", ".35em")
+	      .attr("text-anchor", "middle")
+	      .text("Offer Status")
+	      .attr("class","title")
+	      ;
+
+
+
+
+
+	function change(d) {
+		// capture new data
+		dataset = [
+		{category: "Abandoned", measure: d.Abandoned},
+	      {category: "Accepted", measure: d.Accepted},
+	      {category: "Rejected", measure: d.Rejected}
+	      ];
+
+		// update dataset
+		vis.data([dataset]);
+
+
+
+var path = arcs.select("path");
+path = path.data(pie); // compute the new angles
+  path.attr("d", arc); // redraw the arcs
+					//svgPie.attr("d", arc);
+
+	d3.selectAll("g.slice").selectAll("path").transition()
+			    .duration(750)
+			    .delay(10)
+			    .attr("d", arcFinal )
+			    ;
+
+	//arcs.select("text").remove();
+
+
+  };
+
+
+
+</script>
+
+<script>
+
+</script>
+
+<div>
+</body>
