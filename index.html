@@ -348,7 +348,7 @@ function getCountryByCode(code,data) {
 function drawGraph(state,cat){
     var width = width2;
     var height= height2;
-    var margin = margin2;
+    var margin = {top: 100, right: 20, bottom: 75, left: 40};
 
     var x0 = d3.scale.ordinal()
         .rangeRoundBands([0, width], 0.1);
